@@ -1,5 +1,4 @@
 language: python
 python:
   - "3.6"
-script:
-  - leetcode/SolutionTest.py
+script: python leetcode/SolutionTest.py
