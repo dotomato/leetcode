@@ -28,8 +28,6 @@ class Solution(object):
         for i in range(l_xs - l_ys):
             ys.insert(0, 0)
 
-        print(xs, ys)
-
         dis = 0
         for i in range(l_xs):
             if xs[i] != ys[i]:
@@ -200,7 +198,6 @@ class Solution(object):
 
         while l < r:
             m = (l + r) / 2
-            print(l, r, m)
             cnt = 0
             j = n-1
             max_pq = -1
