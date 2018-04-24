@@ -1,4 +1,4 @@
-L# leetCode
+# LeetCode
 2018.4.24 开始刷LeetCode
  - 使用python3.6
  - 使用unitest进行测试
