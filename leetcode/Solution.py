@@ -1,11 +1,25 @@
+import math, itertools
 class TreeNode:
      def __init__(self, x):
          self.val = x
          self.left = None
          self.right = None
 
+class Employee:
+    def __init__(self, id, importance, subordinates):
+        # It's the unique id of each node.
+        # unique id of this employee
+        self.id = id
+        # the importance value of this employee
+        self.importance = importance
+        # the id of direct subordinates
+        self.subordinates = subordinates
+
 class Solution(object):
     """leetcode"""
+
+    def XXXXXXXX(self):
+        return None
 
     def hammingDistance(self, x, y):
         
@@ -414,3 +428,280 @@ class Solution(object):
             x_dict[n] = -1
         nums1 = [x_dict[n] for n in nums1]
         return nums1
+
+    def averageOfLevels(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[float]
+        """
+
+        result = []
+        a = [root]
+        while len(a) != 0:
+            vals = [i.val for i in a]
+            result.append(sum(vals) / len(vals))
+            b = []
+            for i in a:
+                if i.left is not None:
+                    b.append(i.left)
+                if i.right is not None:
+                    b.append(i.right)
+            a = b
+        return result
+
+    def hasAlternatingBits(self, n):
+        """
+        :type n: int
+        :rtype: bool
+        """
+        a = []
+        while n != 0:
+            a.append(n % 2)
+            n = n // 2
+        for i in range(len(a)-1):
+            if a[i] == a[i+1]:
+                return False
+        return True
+
+    def countPrimeSetBits(self, L, R):
+        """
+        :type L: int
+        :type R: int
+        :rtype: int
+        """
+
+        def prime(n):
+            if n == 1 or n == 0:
+                return False
+            n_2 = int(math.sqrt(n))
+            for i in range(2, n_2 + 1):
+                if n % i == 0:
+                    return False
+            else:
+                return True
+
+        def num2bi(n):
+            a = []
+            while n != 0:
+                a.append(n % 2)
+                n = n >> 1
+            return a
+
+        prime_ar = [prime(i) for i in range(0, 40)]
+
+        bi = num2bi(L)
+        count = sum(bi)
+        result = 1 if prime_ar[count] else 0
+
+        for i in range(L, R):
+            k = 0
+            len_bi = len(bi)
+            while k < len_bi and bi[k] == 1:
+                bi[k] = 0
+                count -= 1
+                k += 1
+            if k == len_bi:
+                bi.append(1)
+            else:
+                bi[k] = 1
+            count += 1
+            if prime_ar[count]:
+                result += 1
+        return result
+
+    def rotateString(self, A, B):
+        """
+        :type A: str
+        :type B: str
+        :rtype: bool
+        """
+
+        len_B = len(B)
+        A = A + A
+        for i in range(len_B):
+            k = 0
+            for j in range(len_B):
+                if A[i+j] == B[j]:
+                    k += 1
+                else:
+                    break
+            if k == len_B:
+                return True
+        else:
+            return False
+
+    def largestTriangleArea(self, points):
+        """
+        :type points: List[List[int]]
+        :rtype: float
+        """
+        result = 0
+        l = len(points)
+        for i in range(l-2):
+            for j in range(i+1, l-1):
+                for k in range(j+1, l):
+                    xa = points[i][0]
+                    ya = points[i][1]
+                    xb = points[j][0]
+                    yb = points[j][1]
+                    xc = points[k][0]
+                    yc = points[k][1]
+
+                    area = 0.5*abs(xa*yb + xb*yc + xc*ya - xa*yc - xc*yb - xb*ya)
+                    result = max(result, area)
+        return result
+
+    def letterCasePermutation(self, S):
+        """
+        :type S: str
+        :rtype: List[str]
+        """
+        '''
+        L = [[i.lower(), i.upper()] if i.isalpha() else i for i in S]
+        return [''.join(i) for i in itertools.product(*L)]
+        '''
+        S = list(S.lower())
+        index = [i for i in range(len(S)) if not S[i].isdigit()]
+        l = len(index)
+        bi = [0]*l
+        result = []
+        for i in range(1 << (len(index))):
+            result.append(''.join(S))
+            k = 0
+            while k < l and bi[k] == 1:
+                bi[k] = 0
+                S[index[k]] = S[index[k]].lower()
+                k += 1
+            if k != l:
+                bi[k] = 1
+                S[index[k]] = S[index[k]].upper()
+        return result
+
+    def detectCapitalUse(self, word):
+        """
+        :type word: str
+        :rtype: bool
+        """
+        count = sum([1 if x.isupper() else 0 for x in word])
+        if len(word) == count or count == 0:
+            return True
+        else:
+            return word[0].isupper() and count == 1
+
+    def addDigits(self, num):
+        """
+        :type num: int
+        :rtype: int
+        """
+        if num == 0:
+            return 0
+        else:
+            result = num % 9
+            if result == 0:
+                return 9
+            else:
+                return result
+
+    def maxAreaOfIsland(self, grid):
+        """
+        :type grid: List[List[int]]
+        :rtype: int
+        """
+        result= 0
+        m = len(grid)
+        n = len(grid[0])
+        shift = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+        for i in range(m):
+            for j in range(n):
+                if grid[i][j]:
+                    grid[i][j] = 0
+                    count = 1
+                    q = [(i, j)]
+                    while len(q) != 0:
+                        cod = q.pop()
+                        for cod_shit in shift:
+                            new_cod = (cod[0]+cod_shit[0], cod[1]+cod_shit[1])
+                            if 0<=new_cod[0]<m and 0<=new_cod[1]<n and grid[new_cod[0]][new_cod[1]]:
+                                q.append(new_cod)
+                                count += 1
+                                grid[new_cod[0]][new_cod[1]] = 0
+                    result = max(result, count)
+        return result
+
+    def getImportance(self, employees, id):
+        """
+        :type employees: list[Employee]
+        :type id: int
+        :rtype: int
+        """
+        employees_dict = {}
+        for em in employees:
+            employees_dict[em.id] = em
+
+        def get1(id1):
+            if len(employees_dict[id1].subordinates) == 0:
+                return employees_dict[id1].importance
+            else:
+                return sum(get1(i) for i in employees_dict[id1].subordinates) + employees_dict[id1].importance
+
+        return get1(id)
+
+    def moveZeroes(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: void Do not return anything, modify nums in-place instead.
+        """
+        i = 0
+        l = len(nums)
+        while i < l and nums[i] != 0:
+            i += 1
+        j = i
+        while j < l and nums[j] == 0:
+            j += 1
+        while j != l:
+            nums[i] = nums[j]
+            nums[j] = 0
+
+            i += 1
+            while j < l and nums[j] == 0:
+                j += 1
+        return nums
+
+    def findTheDifference(self, s, t):
+        """
+        :type s: str
+        :type t: str
+        :rtype: str
+        """
+        s_dict = {}
+        for c in s:
+            if c in s_dict:
+                s_dict[c] += 1
+            else:
+                s_dict[c] = 1
+
+        t_dict = {}
+        for c in t:
+            if c in t_dict:
+                t_dict[c] += 1
+            else:
+                t_dict[c] = 1
+
+        for c in t_dict.keys():
+            if c not in s_dict or s_dict[c] != t_dict[c]:
+                return c
+
+    def customSortString(self, S, T):
+        """
+        :type S: str
+        :type T: str
+        :rtype: str
+        """
+        index = {}
+        for i, c in enumerate(S):
+            index[c] = i
+        t1 = [c for c in T if c in S]
+        t2 = [c for c in T if c not in S]
+
+        t1.sort(key=lambda x: index[x])
+        return ''.join(t1+t2)
