@@ -1,4 +1,4 @@
-import math, itertools
+import math, itertools, collections
 class TreeNode:
      def __init__(self, x):
          self.val = x
@@ -892,3 +892,101 @@ class Solution(object):
         if l > 2:
             nums[a[-3][0]] = 'Bronze Medal'
         return nums
+
+    def numberOfBoomerangs(self, points):
+        """
+        :type points: List[List[int]]
+        :rtype: int
+        """
+        result = 0
+        l = len(points)
+        a = []
+        for i in range(l-1):
+            ai = [0] * l
+            for j in range(i+1, l):
+                ai[j] = (points[i][0] - points[j][0])**2 + (points[i][1] - points[j][1])**2
+            a.append(ai)
+
+        for i in range(l):
+            ai = []
+            for j in range(l):
+                if i < j:
+                    ai.append(a[i][j])
+                elif i > j:
+                    ai.append(a[j][i])
+            aic = collections.Counter(ai)
+            for c in aic.values():
+                result += c * (c-1)
+        return result
+
+    def findShortestSubArray(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        degree = 0
+        length = 1000000
+        count = {}
+        pos = {}
+        for i in range(len(nums)):
+            n = nums[i]
+            c = count.get(n, 0) + 1
+            count[n] = c
+            if n not in pos:
+                pos[n] = i
+            if c == degree:
+                length = min(length, i - pos[n] + 1)
+            elif c > degree:
+                length = i - pos[n] + 1
+                degree = c
+        return length
+
+    def findRestaurant(self, list1, list2):
+        """
+        :type list1: List[str]
+        :type list2: List[str]
+        :rtype: List[str]
+        """
+        d1 = {}
+        for i, s in enumerate(list1):
+            d1[s] = i
+
+        d2 = {}
+        for i, s in enumerate(list2):
+            d2[s] = i
+
+        max_sum = 10000000
+        result = []
+        for s in list1:
+            if s in list2:
+                s_sum = d1[s] + d2[s]
+                if s_sum == max_sum:
+                    result.append(s)
+                elif s_sum < max_sum:
+                    result = [s]
+                    max_sum = s_sum
+        return result
+
+    def imageSmoother(self, M):
+        """
+        :type M: List[List[int]]
+        :rtype: List[List[int]]
+        """
+        shift = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 0), (0, 1), (1, -1), (1, 0), (1, 1)]
+        m = len(M)
+        n = len(M[0])
+        new_M = []
+        for i in range(m):
+            new_Mi = [0] * n
+            for j in range(n):
+                count = 0
+                val = 0
+                for xy in shift:
+                    cod = (i + xy[0], j + xy[1])
+                    if 0<=cod[0]<m and 0<=cod[1]<n:
+                        count += 1
+                        if M[cod[0]][cod[1]]:
+                            val += 1
+                new_Mi[j] = val // count
+            new_M.append(new_Mi)
+        return new_M

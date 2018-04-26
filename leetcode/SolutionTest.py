@@ -1,11 +1,11 @@
 import unittest
-import Solution
+import leetcode.Solution
 
 
 class Test_SolutionTest(unittest.TestCase):
     @classmethod
     def setUp(self):
-        self.ins = Solution.Solution()
+        self.ins = leetcode.Solution.Solution()
         return super().setUp(self)
 
     def test_461(self):
@@ -295,6 +295,31 @@ class Test_SolutionTest(unittest.TestCase):
     def test_509(self):
         result = self.ins.findRelativeRanks([5, 4, 3, 2, 1])
         except_result = ["Gold Medal", "Silver Medal", "Bronze Medal", "4", "5"]
+        self.assertEqual(result, except_result)
+
+    def test_477(self):
+        result = self.ins.numberOfBoomerangs([[0, 0], [1, 0], [2, 0]])
+        except_result = 2
+        self.assertEqual(result, except_result)
+
+    def test_697(self):
+        result = self.ins.findShortestSubArray([1, 2, 2, 3, 1])
+        except_result = 2
+        self.assertEqual(result, except_result)
+
+        result = self.ins.findShortestSubArray([1, 2, 2, 3, 1, 4, 2])
+        except_result = 6
+        self.assertEqual(result, except_result)
+
+    def test_599(self):
+        result = self.ins.findRestaurant(["Shogun", "Tapioca Express", "Burger King", "KFC"],
+                                         ["Piatti", "The Grill at Torrey Pines", "Hungry Hunter Steakhouse", "Shogun"])
+        except_result = ["Shogun"]
+        self.assertEqual(result, except_result)
+
+        result = self.ins.findRestaurant(["Shogun", "Tapioca Express", "Burger King", "KFC"],
+                                         ["KFC", "Shogun", "Burger King"])
+        except_result = ["Shogun"]
         self.assertEqual(result, except_result)
 
     def test_XXX(self):
