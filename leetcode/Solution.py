@@ -272,9 +272,9 @@ class Solution(object):
         if root is None:
             return None
         root.left = (root.left)
-        root.right = trimBST(root.right)
+        root.right = self.trimBST(root.right)
         if L > root.val:
-            return trimBSTroot.right
+            return self.trimBST(root.right)
         elif R < root.val:
             return root.left
         else:
@@ -705,3 +705,190 @@ class Solution(object):
 
         t1.sort(key=lambda x: index[x])
         return ''.join(t1+t2)
+
+    def countBinarySubstrings(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        l1 = 0
+        l2 = 1
+        result = 0
+        for i in range(len(s)-1):
+            if s[i] != s[i+1]:
+                result += min(l1, l2)
+                l1 = l2
+                l2 = 1
+            else:
+                l2 += 1
+        return result + min(l1, l2)
+
+    def mostCommonWord(self, paragraph, banned):
+        """
+        :type paragraph: str
+        :type banned: List[str]
+        :rtype: str
+        """
+        paragraph = [c for c in paragraph if c.isalpha() or c==' ']
+        words = ''.join(paragraph).lower().split(' ')
+        banned = [w.lower() for w in banned]
+        count_dict = {}
+
+        result = None
+        max_count = 0
+        for w in words:
+            k = count_dict.get(w, 0) + 1
+            count_dict[w] = k
+            if k > max_count and w not in banned:
+                max_count = k
+                result = w
+
+        return result
+
+    def rotatedDigits(self, N):
+        """
+        :type N: int
+        :rtype: int
+        """
+        def isgood(n):
+            flag = 0
+            while n != 0:
+                nn = n % 10
+                if nn in [3, 4, 7]:
+                    return 0
+                if nn in [2, 5, 6, 9]:
+                    flag = 1
+                n = n // 10
+            return flag
+        return sum(isgood(i) for i in range(N+1))
+
+    def findTarget(self, root, k):
+        """
+        :type root: TreeNode
+        :type k: int
+        :rtype: bool
+        """
+
+        a = []
+
+        def dsf(node):
+            if node is None:
+                return
+            dsf(node.left)
+            a.append(node.val)
+            dsf(node.right)
+
+        dsf(root)
+
+        i = 0
+        j = len(a) - 1
+        while i != j:
+            n = a[i] + a[j]
+            if n == k:
+                return True
+            if n < k:
+                i += 1
+            else:
+                j -= 1
+
+        return False
+
+    def romanToInt(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        di = {'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000}
+        lastn = 10000
+        result = 0
+        for c in s:
+
+            result += di[c]
+            if di[c] > lastn:
+                result -= lastn * 2
+            lastn = di[c]
+        return result
+
+    def floodFill(self, image, sr, sc, newColor):
+        """
+        :type image: List[List[int]]
+        :type sr: int
+        :type sc: int
+        :type newColor: int
+        :rtype: List[List[int]]
+        """
+        origin_c = image[sr][sc]
+        if origin_c == newColor:
+            return image
+        m = len(image)
+        n = len(image[0])
+        q = [(sr, sc)]
+        while len(q) != 0:
+            point = q.pop()
+            if 0<=point[0]<m and 0<=point[1]<n and image[point[0]][point[1]]==origin_c:
+                image[point[0]][point[1]] = newColor
+                q.append((point[0] - 1, point[1]))
+                q.append((point[0] + 1, point[1]))
+                q.append((point[0], point[1] - 1))
+                q.append((point[0], point[1] + 1))
+        return image
+
+    def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
+        result = 0
+        i = 0
+        stock = -1
+        for i in range(len(prices)-1):
+            if stock == -1:
+                if prices[i] < prices[i+1]:
+                    stock = prices[i]
+            elif prices[i] > prices[i+1]:
+                result += prices[i] - stock
+                stock = -1
+        if stock != -1:
+            result += prices[-1] - stock
+        return result
+
+    def findContentChildren(self, g, s):
+        """
+        :type g: List[int]
+        :type s: List[int]
+        :rtype: int
+        """
+        lg = len(g)
+        ls = len(s)
+        if lg == 0 or ls == 0:
+            return 0
+        g.sort()
+        s.sort()
+        count = 0
+        i = 0
+        j = 0
+        while i != lg and j != ls:
+            while j < ls and s[j] < g[i] :
+                j += 1
+            if j != ls:
+                i += 1
+                j += 1
+                count += 1
+        return count
+
+    def findRelativeRanks(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[str]
+        """
+        l = len(nums)
+        a = list(zip(range(l), nums))
+        a.sort(key=lambda x: x[1])
+        for i in range(l-3):
+            nums[a[i][0]] = str(l - i)
+        nums[a[-1][0]] = 'Gold Medal'
+        if l > 1:
+            nums[a[-2][0]] = 'Silver Medal'
+        if l > 2:
+            nums[a[-3][0]] = 'Bronze Medal'
+        return nums
