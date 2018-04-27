@@ -1,11 +1,11 @@
 import unittest
-import leetcode.Solution
+import Solution
 
 
 class Test_SolutionTest(unittest.TestCase):
     @classmethod
     def setUp(self):
-        self.ins = leetcode.Solution.Solution()
+        self.ins = Solution.Solution()
         return super().setUp(self)
 
     def test_461(self):
