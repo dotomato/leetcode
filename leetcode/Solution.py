@@ -1,9 +1,12 @@
-import math, itertools, collections
+import math, itertools, collections, operator, functools
+
+
 class TreeNode:
      def __init__(self, x):
          self.val = x
          self.left = None
          self.right = None
+
 
 class Employee:
     def __init__(self, id, importance, subordinates):
@@ -14,6 +17,7 @@ class Employee:
         self.importance = importance
         # the id of direct subordinates
         self.subordinates = subordinates
+
 
 class Solution(object):
     """leetcode"""
@@ -990,3 +994,209 @@ class Solution(object):
                 new_Mi[j] = val // count
             new_M.append(new_Mi)
         return new_M
+
+    def readBinaryWatch(self, num):
+        """
+        :type num: int
+        :rtype: List[str]
+        """
+
+        a = [1 << i for i in range(8)]
+        p = itertools.combinations(range(12), num)
+        result = []
+        for pi in p:
+            h = 0
+            m = 0
+            for i in pi:
+                if i < 4:
+                    h += a[i]
+                else:
+                    m += a[i-4]
+            if h < 12 and m < 60:
+                result.append('{}:{:02}'.format(h, m))
+        return result
+
+    def maximumProduct(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        ma = nums[:3]
+        na = nums[:3]
+
+        ma.sort()
+        na.sort(reverse=True)
+
+        for k in range(3, len(nums)):
+            i = nums[k]
+            if i > ma[0]:
+                ma[0] = i
+            if ma[0] > ma[1]:
+                ma[0], ma[1] = ma[1], ma[0]
+            if ma[1] > ma[2]:
+                ma[1], ma[2] = ma[2], ma[1]
+
+            if i < na[0]:
+                na[0] = i
+            if na[0] < na[1]:
+                na[0], na[1] = na[1], na[0]
+            if na[1] < na[2]:
+                na[1], na[2] = na[2], na[1]
+
+        return max(ma[0]*ma[1]*ma[2], na[2]*na[1]*ma[2])
+
+    def _findLHS2(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        def dsf(l, r):
+            if l == r:
+                return 1
+
+            if r - l == 1:
+                return 2 if abs(nums[l] - nums[r]) <= 1 else 1
+
+            m = (l + r) // 2
+            k = nums[m]
+
+            l0 = m - 1
+            while l0 >= l and nums[l0] == k:
+                l0 -= 1
+
+            l1 = m - 1
+            while l1 >= l and (nums[l1] == k or nums[l1] == k + 1):
+                l1 -= 1
+
+            l_1 = m - 1
+            while l_1 >= l and (nums[l_1] == k or nums[l_1] == k - 1):
+                l_1 -= 1
+
+            r0 = m + 1
+            while r0 <= r and nums[r0] == k:
+                r0 += 1
+
+            r1 = m + 1
+            while r1 <= r and (nums[r1] == k or nums[r1] == k + 1):
+                r1 += 1
+
+            r_1 = m + 1
+            while r_1 <= r and (nums[r_1] == k or nums[r_1] == k - 1):
+                r_1 += 1
+
+            cl = max([ r0 - l1, r0 - l_1, r1 - l0, r_1 - l0 ]) - 1
+
+            cl2 = max(cl, dsf(l, m-1), dsf(m+1, r))
+
+            return cl2
+
+        result = dsf(0, len(nums)-1)
+        return result
+
+    def findLHS(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        if len(nums) == 0:
+            return 0
+        di = collections.Counter(nums)
+        result = 0
+        keys = list(di.keys())
+        keys.sort()
+        for i in range(len(keys)-1):
+            if keys[i+1] - keys[i] == 1:
+                result = max(result, di[keys[i+1]] + di[keys[i]])
+        result = max(result, max(di.values()))
+        return result
+
+    def toHex(self, num):
+        """
+        :type num: int
+        :rtype: str
+        """
+        sig = num < 0
+        num = abs(num)
+        result = [0] * 8
+        for i in range(8):
+            result[i] = num % 16
+            num = num // 16
+        if sig:
+            result = [15 - x for x in result]
+            result[0] += 1
+            i = 0
+            while result[i] == 16:
+                result[i] = 0
+                result[i+1] += 1
+                i += 1
+        result = [chr(ord('0') + x) if x < 10 else chr(ord('a') + x - 10) for x in result]
+        l = 7
+        while l >= 0 and result[l] == '0':
+            l -= 1
+        if l == -1:
+            return '0'
+        return ''.join(result[::-1])
+
+    def isSymmetric(self, root):
+        """
+        :type root: TreeNode
+        :rtype: bool
+        """
+        tr = []
+        tl = []
+
+        def dsf_left(node):
+            if node is None:
+                tr.append(None)
+                return
+            tr.append(node.val)
+            dsf_left(node.left)
+            dsf_left(node.right)
+
+        def dsf_right(node):
+            if node is None:
+                tl.append(None)
+                return
+            tl.append(node.val)
+            dsf_right(node.right)
+            dsf_right(node.left)
+
+        dsf_left(root)
+        dsf_right(root)
+
+        return tr == tl
+
+    def plusOne(self, digits):
+        """
+        :type digits: List[int]
+        :rtype: List[int]
+        """
+        sig = digits[0] >= 0
+        if sig:
+            i = len(digits) - 1
+            while i >= 0:
+                if digits[i] == 9:
+                    digits[i] = 0
+                    i -= 1
+                else:
+                    digits[i] += 1
+                    break
+            if i == -1:
+                digits.insert(0, 1)
+            return digits
+        else:
+            digits[0] = -digits[0]
+            i = len(digits) - 1
+            while i >= 0:
+                if digits[i] == 0:
+                    digits[i] = 9
+                    i -= 1
+                else:
+                    digits[i] -= 1
+                    break
+            if digits[0] == 0:
+                if len(digits) == 1:
+                    return digits
+                digits.pop(0)
+            digits[0] = -digits[0]
+            return digits

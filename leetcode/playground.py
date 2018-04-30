@@ -1,4 +1,7 @@
 import itertools
 import collections
-print(max(collections.Counter('1').values())>1)
-print(9 // 2 * 2)
+import heapq
+import random
+
+a = 4
+print([2, 3] == [a, 3])
