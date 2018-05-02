@@ -1200,3 +1200,49 @@ class Solution(object):
                 digits.pop(0)
             digits[0] = -digits[0]
             return digits
+
+    def isBalanced(self, root):
+        """
+        :type root: TreeNode
+        :rtype: bool
+        """
+
+        def dsf(node):
+            if node is None:
+                return True, 0
+
+            ls, ld = dsf(node.left)
+            rs, rd = dsf(node.right)
+
+            return ls and rs and abs(ld - rd) <= 1, max(ld, rd) + 1
+
+        s, d = dsf(root)
+        return s
+
+    def getRow(self, rowIndex):
+        """
+        :type rowIndex: int
+        :rtype: List[int]
+        """
+        if rowIndex == 0:
+            return [1]
+
+        result = []
+        for i in range(rowIndex):
+            t = [1]
+            for j in range(i):
+                t.append(result[j] + result[j+1])
+            t.append(1)
+            result = t
+        return result
+
+    def repeatedSubstringPattern(self, s):
+        """
+        :type s: str
+        :rtype: bool
+        """
+        i = 0
+        j = 1
+        l = len(s)
+        if l <= 1:
+            return False

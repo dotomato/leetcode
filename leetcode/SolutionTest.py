@@ -407,6 +407,32 @@ class Test_SolutionTest(unittest.TestCase):
         except_result = [-9, 9]
         self.assertEqual(result, except_result)
 
+    def test_110(self):
+        result = self.ins.isBalanced(stringToTreeNode('[3,9,20,null,null,15,7]'))
+        except_result = True
+        self.assertEqual(result, except_result)
+
+        result = self.ins.isBalanced(stringToTreeNode('[1,2,2,3,3,null,null,4,4]'))
+        except_result = False
+        self.assertEqual(result, except_result)
+
+    def test_119(self):
+        result = self.ins.getRow(0)
+        except_result = [1]
+        self.assertEqual(result, except_result)
+
+        result = self.ins.getRow(1)
+        except_result = [1, 1]
+        self.assertEqual(result, except_result)
+
+        result = self.ins.getRow(2)
+        except_result = [1, 2, 1]
+        self.assertEqual(result, except_result)
+
+        result = self.ins.getRow(3)
+        except_result = [1, 3, 3, 1]
+        self.assertEqual(result, except_result)
+
     def test_XXX(self):
         result = self.ins.XXXXXXXX()
         except_result = None
